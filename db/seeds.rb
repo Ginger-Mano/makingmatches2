@@ -5,80 +5,25 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-# Game.destroy_all
-# User.destroy_all
-# Card.destroy_all
-
-# puts "begin seed, user"
-
-# user1 = User.create({
-#     username: "Ty",
-#     score: 0,
-#     games_won: 0
-# })
-
-# puts "user complete"
-# puts "begin game"
-
-# game1 = Game.create({
-#     user: user1
-# })
-
-# puts "game complete"
-# puts "begin card"
-
-# card1 = Card.create({
-#     title: "dog",
-#     image_front: "https://assets.hongkiat.com/uploads/unique-playing-cards/glitch-back.jpg",
-#     image_back: "",
-#     game: game1
-# })
-
-# card2 = Card.create({
-#     title: "cat",
-#     image_front: "https://assets.hongkiat.com/uploads/unique-playing-cards/glitch-back.jpg",
-#     image_back: "",
-#     game: game1
-# })
-
-# card3 = Card.create({
-#     title: "pig",
-#     image_front: "https://assets.hongkiat.com/uploads/unique-playing-cards/glitch-back.jpg",
-#     image_back: "",
-#     game: game1
-# })
-
-# card4 = Card.create({
-#     title: "dog",
-#     image_front: "https://assets.hongkiat.com/uploads/unique-playing-cards/glitch-back.jpg",
-#     image_back: "",
-#     game: game1
-# })
-
-# card5 = Card.create({
-#     title: "pig",
-#     image_front: "https://assets.hongkiat.com/uploads/unique-playing-cards/glitch-back.jpg",
-#     image_back: "",
-#     game: game1
-# })
-
-# card6 = Card.create({
-#     title: "cat",
-#     image_front: "https://assets.hongkiat.com/uploads/unique-playing-cards/glitch-back.jpg",
-#     image_back: "",
-#     game: game1
-# })
-
-# puts "done with card, seeding"
+Game.destroy_all
+Card.destroy_all
 
 
-// let pexelsPhotos = () => {
-//     fetch(`https://api.pexels.com/v1/`)
+puts "begin seed"
 
-//         .then(res => res.json())
-//         .then(photos =>
-//             photoCollage(photos)
+headers = {"Authorization": Rails.application.credentials[:pexels][:access_code]}
+# binding.pry
+response = RestClient.get( "https://api.pexels.com/v1/search?query=people", headers)
+# binding.pry
+response_body = JSON.parse(response.body) 
 
-//         )
-// }
-// pexelsPhotos()
+response_body["photos"].each do |photo| 
+    Card.create({
+    image_front: photo["url"],
+    image_back: "https://assets.hongkiat.com/uploads/unique-playing-cards/glitch-back.jpg",
+    photographer: photo["photographer"],
+    avg_color: photo["avg_color"]
+})
+
+puts "end seed"
+end
